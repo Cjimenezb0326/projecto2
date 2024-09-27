@@ -57,10 +57,12 @@ namespace StoreDataManager
                 int id = 1;
                 string nombre = "Isaac".PadRight(30); // Pad to make the size of the string fixed
                 string apellido = "Ramirez".PadRight(50);
+                string apellido2 = "R".PadRight(60);
 
                 writer.Write(id);
                 writer.Write(nombre);
                 writer.Write(apellido);
+                writer.Write(apellido2);
             }
             return OperationStatus.Success;
         }
@@ -74,6 +76,7 @@ namespace StoreDataManager
             {
                 // Print the values as a I know exactly the types, but this needs to be done right
                 Console.WriteLine(reader.ReadInt32());
+                Console.WriteLine(reader.ReadString());
                 Console.WriteLine(reader.ReadString());
                 Console.WriteLine(reader.ReadString());
                 return OperationStatus.Success;
