@@ -87,6 +87,8 @@ function Send-SQLCommand {
 
 # Ejemplos de uso de la función
 Send-SQLCommand -command "CREATE TABLE ESTUDIANTE"
-#Send-SQLCommand -command "INSERT INTO Estudiante (ID, Nombre, Apellido, Apellido2) VALUES (1, 'Isaac', 'Ramirez', 'Herrera')"
+Send-SQLCommand -command "INSERT INTO ESTUDIANTE VALUES (2, 'Isaac', 'Ramirez', 'R')"
 Send-SQLCommand -command "SELECT * FROM ESTUDIANTE"
+
+
 

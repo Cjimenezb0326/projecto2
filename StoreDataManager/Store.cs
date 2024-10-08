@@ -1,6 +1,5 @@
 ﻿using Entities;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+using System.IO;
 
 namespace StoreDataManager
 {
@@ -8,7 +7,7 @@ namespace StoreDataManager
     {
         private static Store? instance = null;
         private static readonly object _lock = new object();
-               
+        
         public static Store GetInstance()
         {
             lock(_lock)
@@ -30,55 +29,66 @@ namespace StoreDataManager
         public Store()
         {
             this.InitializeSystemCatalog();
-            
         }
 
         private void InitializeSystemCatalog()
         {
-            // Always make sure that the system catalog and above folder
-            // exist when initializing
             Directory.CreateDirectory(SystemCatalogPath);
         }
 
         public OperationStatus CreateTable()
         {
-            // Creates a default DB called TESTDB
-            Directory.CreateDirectory($@"{DataPath}\TESTDB");
+            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
+            
+            // Solo crea la tabla sin datos predeterminados
+            if (!File.Exists(tablePath)) // Verifica si la tabla ya existe
+            {
+                using (FileStream stream = File.Open(tablePath, FileMode.Create)) // Crea el archivo de la tabla
+                {
+                    // No se escribe ningún dato en el archivo.
+                }
+            }
 
-            // Creates a default Table called ESTUDIANTES
-            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTES.Table";
+            return OperationStatus.Success;
+        }
 
-            using (FileStream stream = File.Open(tablePath, FileMode.OpenOrCreate))
+        public OperationStatus Insert(int id, string nombre, string apellido, string apellido2)
+        {
+            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
+
+            // Verifica si la tabla existe
+            if (!File.Exists(tablePath))
+            {
+                return OperationStatus.TableNotFound; // Cambia este valor si la tabla no existe
+            }
+
+            // Inserta datos en la tabla
+            using (FileStream stream = File.Open(tablePath, FileMode.Append)) // Usa Append para agregar datos
             using (BinaryWriter writer = new (stream))
             {
-                // Create an object with a hardcoded.
-                // First field is an int, second field is a string of size 30,
-                // third is a string of 50
-                int id = 1;
-                string nombre = "Isaac".PadRight(30); // Pad to make the size of the string fixed
-                string apellido = "Ramirez".PadRight(50);
-                string apellido2 = "R".PadRight(60);
-
                 writer.Write(id);
-                writer.Write(nombre);
-                writer.Write(apellido);
-                writer.Write(apellido2);
+                writer.Write(nombre.PadRight(30)); // Asegura el tamaño correcto
+                writer.Write(apellido.PadRight(50));
+                writer.Write(apellido2.PadRight(60));
             }
-            return OperationStatus.Success;
+
+            return OperationStatus.Success; // Retorna el estado de éxito
         }
 
         public OperationStatus Select()
         {
-            // Creates a default Table called ESTUDIANTES
-            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTES.Table";
+            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             using (FileStream stream = File.Open(tablePath, FileMode.OpenOrCreate))
             using (BinaryReader reader = new (stream))
             {
-                // Print the values as a I know exactly the types, but this needs to be done right
-                Console.WriteLine(reader.ReadInt32());
-                Console.WriteLine(reader.ReadString());
-                Console.WriteLine(reader.ReadString());
-                Console.WriteLine(reader.ReadString());
+                // Imprime los valores sabiendo exactamente los tipos, pero esto necesita hacerse correctamente
+                while (stream.Position < stream.Length)
+                {
+                    Console.WriteLine(reader.ReadInt32());
+                    Console.WriteLine(reader.ReadString());
+                    Console.WriteLine(reader.ReadString());
+                    Console.WriteLine(reader.ReadString());
+                }
                 return OperationStatus.Success;
             }
         }

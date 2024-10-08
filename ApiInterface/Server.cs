@@ -72,11 +72,19 @@ namespace ApiInterface
             }
         }
 
-        private static Task SendErrorResponse(string reason, Socket handler)
+        private static async Task SendErrorResponse(string reason, Socket handler)
         {
-            throw new NotImplementedException();
-        }
+            var response = new Response
+            {
+                Success = false,
+                Error = reason
+            };
 
-        
+            using (NetworkStream stream = new NetworkStream(handler))
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                await writer.WriteLineAsync(JsonSerializer.Serialize(response));
+            }
+        }
     }
 }
