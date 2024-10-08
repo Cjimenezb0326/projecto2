@@ -7,12 +7,12 @@ namespace StoreDataManager
     {
         private static Store? instance = null;
         private static readonly object _lock = new object();
-        
+
         public static Store GetInstance()
         {
-            lock(_lock)
+            lock (_lock)
             {
-                if (instance == null) 
+                if (instance == null)
                 {
                     instance = new Store();
                 }
@@ -40,13 +40,10 @@ namespace StoreDataManager
         {
             var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             
-            // Solo crea la tabla sin datos predeterminados
-            if (!File.Exists(tablePath)) // Verifica si la tabla ya existe
+            // Solo crea la tabla si no existe
+            if (!File.Exists(tablePath)) 
             {
-                using (FileStream stream = File.Open(tablePath, FileMode.Create)) // Crea el archivo de la tabla
-                {
-                    // No se escribe ningún dato en el archivo.
-                }
+                using (FileStream stream = File.Open(tablePath, FileMode.Create)) { }
             }
 
             return OperationStatus.Success;
@@ -59,40 +56,78 @@ namespace StoreDataManager
             // Verifica si la tabla existe
             if (!File.Exists(tablePath))
             {
-                return OperationStatus.TableNotFound; // Cambia este valor si la tabla no existe
+                return OperationStatus.TableNotFound; 
             }
 
             // Inserta datos en la tabla
-            using (FileStream stream = File.Open(tablePath, FileMode.Append)) // Usa Append para agregar datos
+            using (FileStream stream = File.Open(tablePath, FileMode.Append))
             using (BinaryWriter writer = new(stream))
             {
                 writer.Write(id);
-                writer.Write(nombre.PadRight(30)); // Asegura el tamaño correcto
+                writer.Write(nombre.PadRight(30)); // Ajusta el tamaño del string
                 writer.Write(apellido.PadRight(50));
                 writer.Write(apellido2.PadRight(60));
             }
 
-            return OperationStatus.Success; // Retorna el estado de éxito
+            return OperationStatus.Success; 
         }
-
 
         public OperationStatus Select()
         {
             var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
-            using (FileStream stream = File.Open(tablePath, FileMode.OpenOrCreate))
-            using (BinaryReader reader = new (stream))
+            
+            if (!File.Exists(tablePath))
             {
-                
-                while (stream.Position > stream.Length)
-                {
-                    Console.WriteLine(reader.ReadInt32());
-                    Console.WriteLine(reader.ReadString());
-                    Console.WriteLine(reader.ReadString());
-                    Console.WriteLine(reader.ReadString());
-                    
-                }
-                return OperationStatus.Success;
+                return OperationStatus.TableNotFound;
             }
+
+            using (FileStream stream = File.Open(tablePath, FileMode.Open))
+            using (BinaryReader reader = new(stream))
+            {
+                while (stream.Position < stream.Length)
+                {
+                    // Lee los datos de la tabla
+                    int id = reader.ReadInt32();
+                    string nombre = reader.ReadString().Trim();
+                    string apellido = reader.ReadString().Trim();
+                    string apellido2 = reader.ReadString().Trim();
+
+                    Console.WriteLine($"ID: {id}, Nombre: {nombre}, Apellido: {apellido}, Apellido2: {apellido2}");
+                }
+            }
+
+            return OperationStatus.Success;
+        }
+
+        public OperationStatus SelectWithFilter(string filter)
+        {
+            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
+            
+            if (!File.Exists(tablePath))
+            {
+                return OperationStatus.TableNotFound;
+            }
+
+            using (FileStream stream = File.Open(tablePath, FileMode.Open))
+            using (BinaryReader reader = new(stream))
+            {
+                while (stream.Position < stream.Length)
+                {
+                    // Lee los datos de la tabla
+                    int id = reader.ReadInt32();
+                    string nombre = reader.ReadString().Trim();
+                    string apellido = reader.ReadString().Trim();
+                    string apellido2 = reader.ReadString().Trim();
+
+                    // Aplica el filtro, aquí puedes expandir según los atributos
+                    if (filter.Contains($"ID = {id}") || filter.Contains($"Nombre = '{nombre}'"))
+                    {
+                        Console.WriteLine($"ID: {id}, Nombre: {nombre}, Apellido: {apellido}, Apellido2: {apellido2}");
+                    }
+                }
+            }
+
+            return OperationStatus.Success;
         }
     }
 }

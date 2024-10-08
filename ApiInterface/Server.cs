@@ -6,6 +6,10 @@ using System.Text.Json;
 using ApiInterface.Exceptions;
 using ApiInterface.Processors;
 using ApiInterface.Models;
+using Entities;
+using QueryProcessor.Exceptions;
+using QueryProcessor.Operations;
+using StoreDataManager;
 
 namespace ApiInterface
 {
@@ -19,7 +23,7 @@ namespace ApiInterface
             using Socket listener = new(serverEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             listener.Bind(serverEndPoint);
             listener.Listen(supportedParallelConnections);
-            Console.WriteLine($"Server ready at {serverEndPoint.ToString()}");
+            Console.WriteLine($"Server ready at {serverEndPoint}");
 
             while (true)
             {
@@ -33,8 +37,9 @@ namespace ApiInterface
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
-                    await SendErrorResponse("Unknown exception", handler);
+                    Console.WriteLine($"Error procesando la solicitud: {ex.Message}");
+                    Console.WriteLine(ex.StackTrace);
+                    await SendErrorResponse(null, "Unknown exception", handler);
                 }
                 finally
                 {
@@ -54,13 +59,17 @@ namespace ApiInterface
 
         private static Request ConvertToRequestObject(string rawMessage)
         {
+            Console.WriteLine($"Mensaje recibido: {rawMessage}");
             return JsonSerializer.Deserialize<Request>(rawMessage) ?? throw new InvalidRequestException();
         }
 
         private static Response ProcessRequest(Request requestObject)
         {
+            Console.WriteLine($"Procesando solicitud: {JsonSerializer.Serialize(requestObject)}");
             var processor = ProcessorFactory.Create(requestObject);
-            return processor.Process();
+            var response = processor.Process();
+            Console.WriteLine($"Enviando respuesta: {JsonSerializer.Serialize(response)}");
+            return response;
         }
 
         private static void SendResponse(Response response, Socket handler)
@@ -72,12 +81,13 @@ namespace ApiInterface
             }
         }
 
-        private static async Task SendErrorResponse(string reason, Socket handler)
+        private static async Task SendErrorResponse(Request request, string reason, Socket handler)
         {
             var response = new Response
             {
-                Success = false,
-                Error = reason
+                Request = request, // Asegúrate de pasar el objeto Request correctamente con RequestType inicializado
+                Status = OperationStatus.Failure, // Establece el estado de la operación como fallido
+                ResponseBody = reason // Establece el cuerpo de la respuesta con el mensaje de error
             };
 
             using (NetworkStream stream = new NetworkStream(handler))
@@ -86,5 +96,6 @@ namespace ApiInterface
                 await writer.WriteLineAsync(JsonSerializer.Serialize(response));
             }
         }
+
     }
 }

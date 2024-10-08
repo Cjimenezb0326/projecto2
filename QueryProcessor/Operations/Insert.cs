@@ -1,4 +1,5 @@
 ﻿using StoreDataManager;
+using Entities;
 
 namespace QueryProcessor.Operations
 {

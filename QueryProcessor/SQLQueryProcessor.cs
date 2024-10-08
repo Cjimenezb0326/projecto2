@@ -13,6 +13,7 @@ namespace QueryProcessor
             {
                 return new CreateTable().Execute();
             }
+
             if (sentence.StartsWith("INSERT INTO"))
             {
                 // Extraer los valores del comando INSERT
@@ -36,8 +37,11 @@ namespace QueryProcessor
 
             if (sentence.StartsWith("SELECT"))
             {
-                return new Select().Execute();
+                // Pasar un filtro si está presente en la consulta
+                var filter = sentence.Contains("WHERE") ? sentence.Substring(sentence.IndexOf("WHERE") + 6) : null;
+                return new Select().Execute(filter);
             }
+
             else
             {
                 throw new UnknownSQLSentenceException();
