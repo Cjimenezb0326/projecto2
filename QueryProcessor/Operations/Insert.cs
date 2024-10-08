@@ -14,4 +14,5 @@ namespace QueryProcessor.Operations
             return OperationStatus.TableNotFound; // Retorna este estado si la tabla no es encontrada
         }
     }
+
 }

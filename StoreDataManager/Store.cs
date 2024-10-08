@@ -64,7 +64,7 @@ namespace StoreDataManager
 
             // Inserta datos en la tabla
             using (FileStream stream = File.Open(tablePath, FileMode.Append)) // Usa Append para agregar datos
-            using (BinaryWriter writer = new (stream))
+            using (BinaryWriter writer = new(stream))
             {
                 writer.Write(id);
                 writer.Write(nombre.PadRight(30)); // Asegura el tamaño correcto
@@ -75,19 +75,21 @@ namespace StoreDataManager
             return OperationStatus.Success; // Retorna el estado de éxito
         }
 
+
         public OperationStatus Select()
         {
             var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             using (FileStream stream = File.Open(tablePath, FileMode.OpenOrCreate))
             using (BinaryReader reader = new (stream))
             {
-                // Imprime los valores sabiendo exactamente los tipos, pero esto necesita hacerse correctamente
-                while (stream.Position < stream.Length)
+                
+                while (stream.Position > stream.Length)
                 {
                     Console.WriteLine(reader.ReadInt32());
                     Console.WriteLine(reader.ReadString());
                     Console.WriteLine(reader.ReadString());
                     Console.WriteLine(reader.ReadString());
+                    
                 }
                 return OperationStatus.Success;
             }

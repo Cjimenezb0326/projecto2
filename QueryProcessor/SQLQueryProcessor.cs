@@ -17,7 +17,7 @@ namespace QueryProcessor
             {
                 // Extraer los valores del comando INSERT
                 var parts = sentence.Split(new[] { ' ', '(', ',', ')' }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length < 5) // Espera al menos 5 partes: INSERT, INTO, TableName, VALUES, (valores)
+                if (parts.Length < 6) // Espera al menos 6 partes: INSERT, INTO, TableName, VALUES, (valores)
                 {
                     throw new InvalidOperationException("Invalid INSERT command");
                 }
@@ -33,6 +33,7 @@ namespace QueryProcessor
 
                 return new Insert().Execute(tableName, id, nombre, apellido, apellido2);
             }
+
             if (sentence.StartsWith("SELECT"))
             {
                 return new Select().Execute();
