@@ -7,7 +7,7 @@ namespace QueryProcessor.Operations
     {
         internal OperationStatus Execute(string tableName, int id, string nombre, string apellido, string apellido2)
         {
-            if (tableName.Equals("ESTUDIANTES", StringComparison.OrdinalIgnoreCase)) // Comparar con el nombre de la tabla
+            if (tableName.Equals(tableName, StringComparison.OrdinalIgnoreCase)) // Comparar con el nombre de la tabla
             {
                 return Store.GetInstance().Insert(id, nombre, apellido, apellido2); // Llama a Insert en Store
             }

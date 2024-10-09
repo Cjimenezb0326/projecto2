@@ -36,9 +36,9 @@ namespace StoreDataManager
             Directory.CreateDirectory(SystemCatalogPath);
         }
 
-        public OperationStatus CreateTable()
+        public OperationStatus CreateTable(string tableName)
         {
-            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
+            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             
             // Solo crea la tabla si no existe
             if (!File.Exists(tablePath)) 
@@ -49,9 +49,9 @@ namespace StoreDataManager
             return OperationStatus.Success;
         }
 
-        public OperationStatus Insert(int id, string nombre, string apellido, string apellido2)
+        public OperationStatus Insert(string tableName, int id, string nombre, string apellido, string apellido2)
         {
-            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
+            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
 
             // Verifica si la tabla existe
             if (!File.Exists(tablePath))
@@ -72,9 +72,9 @@ namespace StoreDataManager
             return OperationStatus.Success; 
         }
 
-        public OperationStatus Select()
+        public OperationStatus Select(string tableName)
         {
-            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
+            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             
             if (!File.Exists(tablePath))
             {
@@ -99,9 +99,9 @@ namespace StoreDataManager
             return OperationStatus.Success;
         }
 
-        public OperationStatus SelectWithFilter(string filter)
+        public OperationStatus SelectWithFilter(string tableName, string filter)
         {
-            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
+            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             
             if (!File.Exists(tablePath))
             {
