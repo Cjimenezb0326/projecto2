@@ -124,6 +124,18 @@ namespace StoreDataManager
                     {
                         Console.WriteLine($"ID: {id}, Nombre: {nombre}, Apellido: {apellido}, Apellido2: {apellido2}");
                     }
+                    if (filter.Contains($"nombre = '{nombre}'"))
+                    {
+                        Console.WriteLine($"ID: {id}, Nombre: {nombre}, Apellido: {apellido}, Apellido2: {apellido2}");
+                    }
+                    if (filter.Contains($"apellido = '{apellido}'"))
+                    {
+                        Console.WriteLine($"ID: {id}, Nombre: {nombre}, Apellido: {apellido}, Apellido2: {apellido2}");
+                    }  
+                    if (filter.Contains($"apellido2 = '{apellido2}'"))
+                    {
+                        Console.WriteLine($"ID: {id}, Nombre: {nombre}, Apellido: {apellido}, Apellido2: {apellido2}");
+                    }                                          
                 }
             }
 
