@@ -35,6 +35,30 @@ namespace StoreDataManager
         {
             Directory.CreateDirectory(SystemCatalogPath);
         }
+        public OperationStatus CreateDatabase(string dbName)
+        {
+            var dbPath = $@"{DatabaseBasePath}{dbName}";
+            if (!Directory.Exists(dbPath)) 
+            {
+                Directory.CreateDirectory(dbPath);
+            }
+
+            return OperationStatus.Success;
+        }
+
+        public OperationStatus SetDatabase(string dbName)
+        {
+            var dbPath = $@"{DatabaseBasePath}{dbName}";
+
+            if (!Directory.Exists(dbPath))
+            {
+                return OperationStatus.TableNotFound; 
+            }
+
+
+
+            return OperationStatus.Success;
+        }
 
         public OperationStatus CreateTable()
         {
@@ -146,20 +170,20 @@ namespace StoreDataManager
         {
             var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
 
-            // Verifica si la tabla existe
+            
             if (!File.Exists(tablePath))
             {
                 return OperationStatus.TableNotFound;
             }
 
-            // Verifica si la tabla está vacía
+            
             FileInfo fileInfo = new FileInfo(tablePath);
-            if (fileInfo.Length > 0) // Si el archivo tiene contenido
+            if (fileInfo.Length > 0) 
             {
                 return OperationStatus.TableNotEmpty;
             }
 
-            // Elimina la tabla si está vacía
+            
             File.Delete(tablePath);
 
             return OperationStatus.Success;

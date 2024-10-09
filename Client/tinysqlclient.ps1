@@ -86,11 +86,14 @@ function Send-SQLCommand {
 }
 
 # Ejemplos de uso de la función
+#Send-SQLCommand -command "CREATE DATABASE TestDB"
+#Send-SQLCommand -command "SET DATABASE TestDB"
+
 Send-SQLCommand -command "CREATE TABLE ESTUDIANTES"
 Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (4, 'Ic', 'Ramiez', 'R')"
-Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (3, 'I', 'Ramirz', 'R')"
-Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (5, 'I', 'Ramirz', 'R')"
-Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (4, 'I', 'Ramirz', 'R')"
-#Send-SQLCommand -command "SELECT * FROM ESTUDIANTES ;"
-Send-SQLCommand -command "SELECT * FROM ESTUDIANTES WHERE apellido = 'Ramirz';  "
+#Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (3, 'I', 'Ramirz', 'R')"
+#Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (5, 'I', 'Ramirz', 'R')"
+#Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (4, 'I', 'Ramirz', 'R')"
+Send-SQLCommand -command "SELECT * FROM ESTUDIANTES ;"
+#Send-SQLCommand -command "SELECT * FROM ESTUDIANTES WHERE apellido = 'Ramirz';  "
 #Send-SQLCommand -command "DROP TABLE ESTUDIANTE"

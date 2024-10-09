@@ -9,6 +9,30 @@ namespace QueryProcessor
     {
         public static OperationStatus Execute(string sentence)
         {
+            if (sentence.StartsWith("CREATE DATABASE"))
+            {
+                // Extraer el nombre de la base de datos
+                var parts = sentence.Split(new[] { ' ', '(' ,')' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 3) // Espera al menos 3 partes: CREATE, DATABASE, <nombre_base_datos>
+                {
+                    throw new InvalidOperationException("Invalid CREATE DATABASE command");
+                }
+
+                string dbName = parts[2];
+                return new CreateDatabase().Execute(dbName);
+            }
+
+            if (sentence.StartsWith("SET DATABASE"))
+            {
+                var parts = sentence.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 3) // Espera al menos 3 partes: SET, DATABASE, <nombre_base_datos>
+                {
+                    throw new InvalidOperationException("Invalid SET DATABASE command");
+                }
+
+                string dbName = parts[2];
+                return new SetDatabase().Execute(dbName);
+            }
             if (sentence.StartsWith("CREATE TABLE"))
             {
                 return new CreateTable().Execute();
