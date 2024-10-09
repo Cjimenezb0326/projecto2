@@ -38,7 +38,7 @@ namespace StoreDataManager
 
         public OperationStatus CreateTable()
         {
-            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
+            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
             
             // Solo crea la tabla si no existe
             if (!File.Exists(tablePath)) 
@@ -51,7 +51,7 @@ namespace StoreDataManager
 
         public OperationStatus Insert(int id, string nombre, string apellido, string apellido2)
         {
-            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
+            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
 
             // Verifica si la tabla existe
             if (!File.Exists(tablePath))
@@ -74,7 +74,7 @@ namespace StoreDataManager
 
         public OperationStatus Select()
         {
-            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
+            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
             
             if (!File.Exists(tablePath))
             {
@@ -101,7 +101,7 @@ namespace StoreDataManager
 
         public OperationStatus SelectWithFilter(string filter)
         {
-            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
+            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
             
             if (!File.Exists(tablePath))
             {
