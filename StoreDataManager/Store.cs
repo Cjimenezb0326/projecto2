@@ -36,7 +36,7 @@ namespace StoreDataManager
             Directory.CreateDirectory(SystemCatalogPath);
         }
 
-        public OperationStatus CreateTable(string tableName)
+        public OperationStatus CreateTable()
         {
             var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             
@@ -49,7 +49,7 @@ namespace StoreDataManager
             return OperationStatus.Success;
         }
 
-        public OperationStatus Insert(string tableName, int id, string nombre, string apellido, string apellido2)
+        public OperationStatus Insert(int id, string nombre, string apellido, string apellido2)
         {
             var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
 
@@ -72,7 +72,7 @@ namespace StoreDataManager
             return OperationStatus.Success; 
         }
 
-        public OperationStatus Select(string tableName)
+        public OperationStatus Select()
         {
             var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             
@@ -99,7 +99,7 @@ namespace StoreDataManager
             return OperationStatus.Success;
         }
 
-        public OperationStatus SelectWithFilter(string tableName, string filter)
+        public OperationStatus SelectWithFilter(string filter)
         {
             var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
             
