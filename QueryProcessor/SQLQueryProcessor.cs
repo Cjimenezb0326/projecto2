@@ -42,6 +42,21 @@ namespace QueryProcessor
                 return new Select().Execute(filter);
             }
 
+            if (sentence.StartsWith("DROP TABLE"))
+            {
+                // Extraer el nombre de la tabla
+                var parts = sentence.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 3)
+                {
+                    throw new InvalidOperationException("Invalid DROP TABLE command");
+                }
+
+                string tableName = parts[2];
+
+                // Llama al método DropTable en la clase Store
+                return Store.GetInstance().DropTable(tableName);
+            }
+            
             else
             {
                 throw new UnknownSQLSentenceException();

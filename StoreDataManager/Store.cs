@@ -129,5 +129,28 @@ namespace StoreDataManager
 
             return OperationStatus.Success;
         }
-    }
+        public OperationStatus DropTable(string tableName)
+        {
+            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
+
+            // Verifica si la tabla existe
+            if (!File.Exists(tablePath))
+            {
+                return OperationStatus.TableNotFound;
+            }
+
+            // Verifica si la tabla está vacía
+            FileInfo fileInfo = new FileInfo(tablePath);
+            if (fileInfo.Length > 0) // Si el archivo tiene contenido
+            {
+                return OperationStatus.TableNotEmpty;
+            }
+
+            // Elimina la tabla si está vacía
+            File.Delete(tablePath);
+
+            return OperationStatus.Success;
+        }
+
+    }   
 }
