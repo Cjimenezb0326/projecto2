@@ -37,10 +37,11 @@ namespace QueryProcessor
 
             if (sentence.StartsWith("SELECT"))
             {
-                // Pasar un filtro si está presente en la consulta
-                var filter = sentence.Contains("WHERE") ? sentence.Substring(sentence.IndexOf("WHERE") + 6) : null;
+                // Extrae el filtro de la consulta SQL
+                var filter = sentence.Contains("WHERE") ? sentence.Substring(sentence.IndexOf("WHERE") + 6).Trim() : null;
                 return new Select().Execute(filter);
             }
+
 
             if (sentence.StartsWith("DROP TABLE"))
             {

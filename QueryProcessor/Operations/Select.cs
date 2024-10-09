@@ -14,7 +14,7 @@ namespace QueryProcessor.Operations
                 return Store.GetInstance().SelectWithFilter(filter); // Este sería el método en Store para filtrar
             }
 
-            // Si no hay filtro, selecciona todo
+            
             return Store.GetInstance().Select();
         }
     }

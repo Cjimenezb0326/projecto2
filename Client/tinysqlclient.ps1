@@ -86,9 +86,9 @@ function Send-SQLCommand {
 }
 
 # Ejemplos de uso de la función
-#Send-SQLCommand -command "CREATE TABLE ESTUDIANTES"
-#Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (4, 'Ic', 'Ramiez', 'R')"
-#Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (3, 'I', 'Ramirz', 'R')"
+Send-SQLCommand -command "CREATE TABLE ESTUDIANTES"
+Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (4, 'Ic', 'Ramiez', 'R')"
+Send-SQLCommand -command "INSERT INTO ESTUDIANTES VALUES (2, 'I', 'Ramirz', 'R')"
 #Send-SQLCommand -command "SELECT * FROM ESTUDIANTES ;"
-# Comando DROP TABLE para eliminar la tabla si está vacía
+Send-SQLCommand -command "SELECT * FROM ESTUDIANTES WHERE id = '4';  "
 #Send-SQLCommand -command "DROP TABLE ESTUDIANTE"

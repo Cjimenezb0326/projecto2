@@ -119,8 +119,8 @@ namespace StoreDataManager
                     string apellido = reader.ReadString().Trim();
                     string apellido2 = reader.ReadString().Trim();
 
-                    // Aplica el filtro, aquí puedes expandir según los atributos
-                    if (filter.Contains($"ID = {id}") || filter.Contains($"Nombre = '{nombre}'"))
+                    
+                    if (filter.Contains($"id = '{id}'") )//|| filter.Contains($"nombre = '{nombre}'")  )
                     {
                         Console.WriteLine($"ID: {id}, Nombre: {nombre}, Apellido: {apellido}, Apellido2: {apellido2}");
                     }
@@ -129,6 +129,7 @@ namespace StoreDataManager
 
             return OperationStatus.Success;
         }
+
         public OperationStatus DropTable(string tableName)
         {
             var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
