@@ -264,6 +264,93 @@ namespace StoreDataManager
 
             return OperationStatus.Success;
         }
+        public OperationStatus Update(string tableName, string columnName, string newValue, string? whereClause = null)
+        {
+            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
 
+            // Verifica si la tabla existe
+            if (!File.Exists(tablePath))
+            {
+                return OperationStatus.TableNotFound;
+            }
+
+            List<(int, string, string, string)> rowsToUpdate = new();
+            bool isRowUpdated = false;
+
+            // Lee el archivo y guarda las filas que se van a actualizar
+            using (FileStream stream = File.Open(tablePath, FileMode.Open))
+            using (BinaryReader reader = new(stream))
+            {
+                while (stream.Position < stream.Length)
+                {
+                    // Lee los datos de la tabla
+                    int id = reader.ReadInt32();
+                    string nombre = reader.ReadString().Trim();
+                    string apellido = reader.ReadString().Trim();
+                    string apellido2 = reader.ReadString().Trim();
+
+                    bool shouldUpdate = false;
+
+                    // Verifica si hay una cláusula WHERE y si la fila cumple con la condición
+                    if (!string.IsNullOrEmpty(whereClause))
+                    {
+                        if (whereClause.Contains($"id = {id}")) shouldUpdate = true;
+                        if (whereClause.Contains($"nombre = '{nombre}'")) shouldUpdate = true;
+                        if (whereClause.Contains($"apellido = '{apellido}'")) shouldUpdate = true;
+                        if (whereClause.Contains($"apellido2 = '{apellido2}'")) shouldUpdate = true;
+                    }
+
+                    // Si no hay cláusula WHERE, actualiza todas las filas
+                    if (string.IsNullOrEmpty(whereClause))
+                    {
+                        shouldUpdate = true;
+                    }
+
+                    if (shouldUpdate)
+                    {
+                        isRowUpdated = true;
+                        // Actualiza el valor de la columna especificada
+                        switch (columnName.ToLower())
+                        {
+                            case "nombre":
+                                nombre = newValue.PadRight(30);
+                                break;
+                            case "apellido":
+                                apellido = newValue.PadRight(50);
+                                break;
+                            case "apellido2":
+                                apellido2 = newValue.PadRight(60);
+                                break;
+                            default:
+                                throw new Exception($"La columna '{columnName}' no existe.");
+                        }
+                    }
+
+                    // Guarda la fila (actualizada o no)
+                    rowsToUpdate.Add((id, nombre, apellido, apellido2));
+                }
+            }
+
+            if (!isRowUpdated && !string.IsNullOrEmpty(whereClause))
+            {
+                // Si no se actualizó ninguna fila con la condición dada
+                return OperationStatus.NoRowsUpdated;
+            }
+
+            // Sobrescribe el archivo con las filas actualizadas
+            using (FileStream stream = File.Open(tablePath, FileMode.Create))
+            using (BinaryWriter writer = new(stream))
+            {
+                foreach (var row in rowsToUpdate)
+                {
+                    writer.Write(row.Item1);
+                    writer.Write(row.Item2); // La cadena ya está ajustada
+                    writer.Write(row.Item3);
+                    writer.Write(row.Item4);
+                }
+            }
+
+            return OperationStatus.Success;
+        }
     }   
 }
