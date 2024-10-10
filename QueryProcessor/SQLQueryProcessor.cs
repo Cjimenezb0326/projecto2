@@ -84,31 +84,26 @@ namespace QueryProcessor
 
             if (sentence.StartsWith("DELETE FROM"))
             {
-                // Dividir la sentencia por espacios en blanco
-                var parts = sentence.Split(new[] { ' ', "WHERE" }, StringSplitOptions.RemoveEmptyEntries);
-                
-                if (parts.Length < 3) // Debe tener al menos 3 partes: DELETE, FROM, <nombre_tabla>
+                // Extraer el nombre de la tabla y la cláusula WHERE (si existe)
+                var parts = sentence.Split(new[] { ' ', '(', ',', ')' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 3) // Espera al menos 3 partes: DELETE, FROM, <nombre_tabla>
                 {
                     throw new InvalidOperationException("Invalid DELETE command");
                 }
 
-                // Obtener el nombre de la tabla
                 string tableName = parts[2];
 
-                // Verificar si hay una cláusula WHERE
-                string? whereClause = null;
-                int whereIndex = Array.IndexOf(parts, "WHERE");
-                if (whereIndex != -1 && whereIndex + 1 < parts.Length)
+                string whereClause = null;
+                if (sentence.Contains("WHERE"))
                 {
-                    // Unir los elementos después de WHERE para formar la cláusula
-                    whereClause = string.Join(" ", parts[(whereIndex + 1)..]);
+                    // Extraer la cláusula WHERE
+                    whereClause = sentence.Substring(sentence.IndexOf("WHERE") + 5).Trim();
                 }
 
-                // Llamar al método Delete de la clase Store
+                // Llama al método Delete en la clase Store
                 return Store.GetInstance().Delete(tableName, whereClause);
             }
 
-            throw new UnknownSQLSentenceException();
         }
     }
 }

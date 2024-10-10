@@ -192,45 +192,62 @@ namespace StoreDataManager
         public OperationStatus Delete(string tableName, string? whereClause = null)
         {
             var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
-            
+
+            // Verifica si la tabla existe
             if (!File.Exists(tablePath))
             {
                 return OperationStatus.TableNotFound;
             }
 
-            List<Tuple<int, string, string, string>> rows = new List<Tuple<int, string, string, string>>();
-            
-            // Lee las filas existentes en la tabla
+            List<(int, string, string, string)> rowsToKeep = new();
+            bool isRowDeleted = false;
+
+            // Lee el archivo y guarda las filas que no se eliminarán
             using (FileStream stream = File.Open(tablePath, FileMode.Open))
             using (BinaryReader reader = new(stream))
             {
                 while (stream.Position < stream.Length)
                 {
+                    // Lee los datos de la tabla
                     int id = reader.ReadInt32();
                     string nombre = reader.ReadString().Trim();
                     string apellido = reader.ReadString().Trim();
                     string apellido2 = reader.ReadString().Trim();
 
-                    rows.Add(new Tuple<int, string, string, string>(id, nombre, apellido, apellido2));
+                    bool shouldDelete = false;
+
+                    // Verifica si hay una cláusula WHERE y si la fila cumple con la condición
+                    if (!string.IsNullOrEmpty(whereClause))
+                    {
+                        if (whereClause.Contains($"id = '{id}'")) shouldDelete = true;
+                        if (whereClause.Contains($"nombre = '{nombre}'")) shouldDelete = true;
+                        if (whereClause.Contains($"apellido = '{apellido}'")) shouldDelete = true;
+                        if (whereClause.Contains($"apellido2 = '{apellido2}'")) shouldDelete = true;
+                    }
+
+                    if (!shouldDelete)
+                    {
+                        // Guarda la fila si no se debe eliminar
+                        rowsToKeep.Add((id, nombre, apellido, apellido2));
+                    }
+                    else
+                    {
+                        isRowDeleted = true;
+                    }
                 }
             }
 
-            // Si no hay cláusula WHERE, elimina todas las filas
-            if (string.IsNullOrEmpty(whereClause))
+            if (!isRowDeleted && !string.IsNullOrEmpty(whereClause))
             {
-                File.Delete(tablePath); // Borra el archivo y luego recrea la tabla vacía
-                using (FileStream stream = File.Open(tablePath, FileMode.Create)) { }
-                return OperationStatus.Success;
+                // Si no se eliminó ninguna fila con la condición dada
+                return OperationStatus.NoRowsDeleted;
             }
 
-            // Filtra las filas que NO coinciden con la cláusula WHERE (las que quedarán en la tabla)
-            var filteredRows = rows.Where(row => !EvaluateWhereClause(row, whereClause)).ToList();
-
-            // Reescribe la tabla solo con las filas que no fueron eliminadas
+            // Sobrescribe el archivo con las filas que se mantienen
             using (FileStream stream = File.Open(tablePath, FileMode.Create))
             using (BinaryWriter writer = new(stream))
             {
-                foreach (var row in filteredRows)
+                foreach (var row in rowsToKeep)
                 {
                     writer.Write(row.Item1);
                     writer.Write(row.Item2.PadRight(30));
@@ -239,25 +256,7 @@ namespace StoreDataManager
                 }
             }
 
-            // Aquí se puede implementar la lógica para actualizar los índices asociados si existen
-            // ActualizarÍndices(tableName, filteredRows);
-
             return OperationStatus.Success;
         }
-
-        // Método para evaluar la cláusula WHERE
-        private bool EvaluateWhereClause(Tuple<int, string, string, string> row, string whereClause)
-        {
-            // Aquí puedes analizar la cláusula WHERE y decidir si el 'row' debe eliminarse
-            // Un ejemplo simple de lógica para evaluar condiciones
-            if (whereClause.Contains($"id = '{row.Item1}'")) return true;
-            if (whereClause.Contains($"nombre = '{row.Item2}'")) return true;
-            if (whereClause.Contains($"apellido = '{row.Item3}'")) return true;
-            if (whereClause.Contains($"apellido2 = '{row.Item4}'")) return true;
-
-            return false; // Si no coincide, no eliminamos
-        }
-
-
     }   
 }
