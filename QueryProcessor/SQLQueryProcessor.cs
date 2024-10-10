@@ -34,7 +34,7 @@ namespace QueryProcessor
 
             if (sentence.StartsWith("CREATE TABLE"))
             {
-                return new CreateTable(tableName).Execute();
+                return new CreateTable().Execute();
             }
 
             if (sentence.StartsWith("INSERT INTO"))
