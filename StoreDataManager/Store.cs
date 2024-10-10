@@ -60,9 +60,9 @@ namespace StoreDataManager
             return OperationStatus.Success;
         }
 
-        public OperationStatus CreateTable()
+        public OperationStatus CreateTable(string tableName)
         {
-            var tablePath = $@"{DataPath}\TESTDB\ESTUDIANTE.Table";
+            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
             
             // Solo crea la tabla si no existe
             if (!File.Exists(tablePath)) 
