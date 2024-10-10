@@ -7,7 +7,7 @@ namespace QueryProcessor.Operations
     {
         internal OperationStatus Execute()
         {
-            return Store.GetInstance().CreateTable(tableName);
+            return Store.GetInstance().CreateTable();
         }
     }
 }
