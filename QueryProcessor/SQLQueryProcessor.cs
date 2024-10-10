@@ -82,27 +82,36 @@ namespace QueryProcessor
                 return Store.GetInstance().DropTable(tableName);
             }
 
-            if (sentence.StartsWith("DELETE FROM"))
+            try
             {
-                // Extraer el nombre de la tabla y la cláusula WHERE (si existe)
-                var parts = sentence.Split(new[] { ' ', '(', ',', ')' }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length < 3) // Espera al menos 3 partes: DELETE, FROM, <nombre_tabla>
+                if (sentence.StartsWith("DELETE FROM"))
                 {
-                    throw new InvalidOperationException("Invalid DELETE command");
+                    // Extraer el nombre de la tabla y la cláusula WHERE (si existe)
+                    var parts = sentence.Split(new[] { ' ', '(', ',', ')' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length < 3) // Espera al menos 3 partes: DELETE, FROM, <nombre_tabla>
+                    {
+                        throw new InvalidOperationException("Invalid DELETE command");
+                    }
+
+                    string tableName = parts[2];
+
+                    string whereClause = null;
+                    if (sentence.Contains("WHERE"))
+                    {
+                        // Extraer la cláusula WHERE
+                        whereClause = sentence.Substring(sentence.IndexOf("WHERE") + 5).Trim();
+                    }
+
+                    // Llama al método Delete en la clase Store
+                    return Store.GetInstance().Delete(tableName, whereClause);
                 }
-
-                string tableName = parts[2];
-
-                string whereClause = null;
-                if (sentence.Contains("WHERE"))
-                {
-                    // Extraer la cláusula WHERE
-                    whereClause = sentence.Substring(sentence.IndexOf("WHERE") + 5).Trim();
-                }
-
-                // Llama al método Delete en la clase Store
-                return Store.GetInstance().Delete(tableName, whereClause);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
         }
     }
 }
