@@ -9,5 +9,6 @@
         RowNotFound,      // Agregado para manejar el caso en que no se encuentran filas para eliminar
         DeleteFailed,      // Agregado para manejar cualquier fallo durante la operación de eliminación
         NoRowsDeleted,
+        NoRowsUpdated,
     }
 }
