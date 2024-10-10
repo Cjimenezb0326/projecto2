@@ -114,7 +114,7 @@ namespace QueryProcessor
 
                 return status;
             }
-
+            }
 
             if (sentence.StartsWith("SELECT"))
             {
