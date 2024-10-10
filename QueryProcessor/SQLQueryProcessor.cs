@@ -90,7 +90,7 @@ namespace QueryProcessor
             if (sentence.StartsWith("DELETE FROM"))
             {
                 // Dividir la sentencia por espacios en blanco
-                var parts = sentence.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                var parts = sentence.Split(new[] { ' ', 'WHERE' }, StringSplitOptions.RemoveEmptyEntries);
                 
                 if (parts.Length < 3) // Debe tener al menos 3 partes: DELETE, FROM, <nombre_tabla>
                 {
