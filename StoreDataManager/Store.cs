@@ -219,10 +219,16 @@ namespace StoreDataManager
                     // Verifica si hay una cláusula WHERE y si la fila cumple con la condición
                     if (!string.IsNullOrEmpty(whereClause))
                     {
-                        if (whereClause.Contains($"id = '{id}'")) shouldDelete = true;
+                        if (whereClause.Contains($"id = {id}")) shouldDelete = true;
                         if (whereClause.Contains($"nombre = '{nombre}'")) shouldDelete = true;
                         if (whereClause.Contains($"apellido = '{apellido}'")) shouldDelete = true;
                         if (whereClause.Contains($"apellido2 = '{apellido2}'")) shouldDelete = true;
+                    }
+
+                    // Si no hay cláusula WHERE, elimina todas las filas
+                    if (string.IsNullOrEmpty(whereClause))
+                    {
+                        shouldDelete = true;
                     }
 
                     if (!shouldDelete)
@@ -258,5 +264,6 @@ namespace StoreDataManager
 
             return OperationStatus.Success;
         }
+
     }   
 }
