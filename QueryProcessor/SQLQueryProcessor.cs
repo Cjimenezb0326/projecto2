@@ -85,12 +85,12 @@ namespace QueryProcessor
             else
             {
                 throw new UnknownSQLSentenceException();
-                
+
             }
             if (sentence.StartsWith("DELETE FROM"))
             {
-                // Dividir la sentencia para obtener las partes necesarias
-                var parts = sentence.Split(new[] { ' ', 'WHERE' }, StringSplitOptions.RemoveEmptyEntries);
+                // Dividir la sentencia por espacios en blanco
+                var parts = sentence.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                 
                 if (parts.Length < 3) // Debe tener al menos 3 partes: DELETE, FROM, <nombre_tabla>
                 {
@@ -101,7 +101,13 @@ namespace QueryProcessor
                 string tableName = parts[2];
 
                 // Verificar si hay una cláusula WHERE
-                string? whereClause = sentence.Contains("WHERE") ? sentence.Substring(sentence.IndexOf("WHERE") + 6).Trim() : null;
+                string? whereClause = null;
+                int whereIndex = Array.IndexOf(parts, "WHERE");
+                if (whereIndex != -1 && whereIndex + 1 < parts.Length)
+                {
+                    // Unir los elementos después de WHERE para formar la cláusula
+                    whereClause = string.Join(" ", parts[(whereIndex + 1)..]);
+                }
 
                 // Llamar al método Delete de la clase Store
                 return Store.GetInstance().Delete(tableName, whereClause);
