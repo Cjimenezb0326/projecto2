@@ -224,15 +224,7 @@ namespace StoreDataManager
             }
 
             // Filtra las filas que NO coinciden con la cláusula WHERE (las que quedarán en la tabla)
-            var filteredRows = rows.Where(row =>
-            {
-                // Verifica las condiciones WHERE, aquí un ejemplo simple solo con 'id' como filtro
-                if (whereClause.Contains($"id = '{row.Item1}'"))
-                {
-                    return false; // Esta fila será eliminada
-                }
-                return true; // Esta fila se mantiene
-            }).ToList();
+            var filteredRows = rows.Where(row => !EvaluateWhereClause(row, whereClause)).ToList();
 
             // Reescribe la tabla solo con las filas que no fueron eliminadas
             using (FileStream stream = File.Open(tablePath, FileMode.Create))
@@ -252,6 +244,20 @@ namespace StoreDataManager
 
             return OperationStatus.Success;
         }
+
+        // Método para evaluar la cláusula WHERE
+        private bool EvaluateWhereClause(Tuple<int, string, string, string> row, string whereClause)
+        {
+            // Aquí puedes analizar la cláusula WHERE y decidir si el 'row' debe eliminarse
+            // Un ejemplo simple de lógica para evaluar condiciones
+            if (whereClause.Contains($"id = '{row.Item1}'")) return true;
+            if (whereClause.Contains($"nombre = '{row.Item2}'")) return true;
+            if (whereClause.Contains($"apellido = '{row.Item3}'")) return true;
+            if (whereClause.Contains($"apellido2 = '{row.Item4}'")) return true;
+
+            return false; // Si no coincide, no eliminamos
+        }
+
 
     }   
 }

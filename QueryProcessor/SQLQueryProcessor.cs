@@ -33,6 +33,7 @@ namespace QueryProcessor
                 string dbName = parts[2];
                 return new SetDatabase().Execute(dbName);
             }
+
             if (sentence.StartsWith("CREATE TABLE"))
             {
                 return new CreateTable().Execute();
@@ -66,7 +67,6 @@ namespace QueryProcessor
                 return new Select().Execute(filter);
             }
 
-
             if (sentence.StartsWith("DROP TABLE"))
             {
                 // Extraer el nombre de la tabla
@@ -81,16 +81,11 @@ namespace QueryProcessor
                 // Llama al método DropTable en la clase Store
                 return Store.GetInstance().DropTable(tableName);
             }
-            
-            else
-            {
-                throw new UnknownSQLSentenceException();
 
-            }
             if (sentence.StartsWith("DELETE FROM"))
             {
                 // Dividir la sentencia por espacios en blanco
-                var parts = sentence.Split(new[] { ' ', 'WHERE' }, StringSplitOptions.RemoveEmptyEntries);
+                var parts = sentence.Split(new[] { ' ', "WHERE" }, StringSplitOptions.RemoveEmptyEntries);
                 
                 if (parts.Length < 3) // Debe tener al menos 3 partes: DELETE, FROM, <nombre_tabla>
                 {
@@ -112,6 +107,8 @@ namespace QueryProcessor
                 // Llamar al método Delete de la clase Store
                 return Store.GetInstance().Delete(tableName, whereClause);
             }
+
+            throw new UnknownSQLSentenceException();
         }
     }
 }
