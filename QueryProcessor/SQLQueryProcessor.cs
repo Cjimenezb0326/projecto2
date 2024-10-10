@@ -85,6 +85,26 @@ namespace QueryProcessor
             else
             {
                 throw new UnknownSQLSentenceException();
+                
+            }
+            if (sentence.StartsWith("DELETE FROM"))
+            {
+                // Dividir la sentencia para obtener las partes necesarias
+                var parts = sentence.Split(new[] { ' ', 'WHERE' }, StringSplitOptions.RemoveEmptyEntries);
+                
+                if (parts.Length < 3) // Debe tener al menos 3 partes: DELETE, FROM, <nombre_tabla>
+                {
+                    throw new InvalidOperationException("Invalid DELETE command");
+                }
+
+                // Obtener el nombre de la tabla
+                string tableName = parts[2];
+
+                // Verificar si hay una cláusula WHERE
+                string? whereClause = sentence.Contains("WHERE") ? sentence.Substring(sentence.IndexOf("WHERE") + 6).Trim() : null;
+
+                // Llamar al método Delete de la clase Store
+                return Store.GetInstance().Delete(tableName, whereClause);
             }
         }
     }

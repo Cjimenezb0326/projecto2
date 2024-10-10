@@ -189,5 +189,69 @@ namespace StoreDataManager
             return OperationStatus.Success;
         }
 
+        public OperationStatus Delete(string tableName, string? whereClause = null)
+        {
+            var tablePath = $@"{DataPath}\TESTDB\{tableName}.Table";
+            
+            if (!File.Exists(tablePath))
+            {
+                return OperationStatus.TableNotFound;
+            }
+
+            List<Tuple<int, string, string, string>> rows = new List<Tuple<int, string, string, string>>();
+            
+            // Lee las filas existentes en la tabla
+            using (FileStream stream = File.Open(tablePath, FileMode.Open))
+            using (BinaryReader reader = new(stream))
+            {
+                while (stream.Position < stream.Length)
+                {
+                    int id = reader.ReadInt32();
+                    string nombre = reader.ReadString().Trim();
+                    string apellido = reader.ReadString().Trim();
+                    string apellido2 = reader.ReadString().Trim();
+
+                    rows.Add(new Tuple<int, string, string, string>(id, nombre, apellido, apellido2));
+                }
+            }
+
+            // Si no hay cláusula WHERE, elimina todas las filas
+            if (string.IsNullOrEmpty(whereClause))
+            {
+                File.Delete(tablePath); // Borra el archivo y luego recrea la tabla vacía
+                using (FileStream stream = File.Open(tablePath, FileMode.Create)) { }
+                return OperationStatus.Success;
+            }
+
+            // Filtra las filas que NO coinciden con la cláusula WHERE (las que quedarán en la tabla)
+            var filteredRows = rows.Where(row =>
+            {
+                // Verifica las condiciones WHERE, aquí un ejemplo simple solo con 'id' como filtro
+                if (whereClause.Contains($"id = '{row.Item1}'"))
+                {
+                    return false; // Esta fila será eliminada
+                }
+                return true; // Esta fila se mantiene
+            }).ToList();
+
+            // Reescribe la tabla solo con las filas que no fueron eliminadas
+            using (FileStream stream = File.Open(tablePath, FileMode.Create))
+            using (BinaryWriter writer = new(stream))
+            {
+                foreach (var row in filteredRows)
+                {
+                    writer.Write(row.Item1);
+                    writer.Write(row.Item2.PadRight(30));
+                    writer.Write(row.Item3.PadRight(50));
+                    writer.Write(row.Item4.PadRight(60));
+                }
+            }
+
+            // Aquí se puede implementar la lógica para actualizar los índices asociados si existen
+            // ActualizarÍndices(tableName, filteredRows);
+
+            return OperationStatus.Success;
+        }
+
     }   
 }
