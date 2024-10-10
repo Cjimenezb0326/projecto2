@@ -103,7 +103,6 @@ namespace QueryProcessor
                 // Llama al método Delete en la clase Store
                 return Store.GetInstance().Delete(tableName, whereClause);
             }
-
         }
     }
 }
